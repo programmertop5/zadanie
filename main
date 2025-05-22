@@ -1,0 +1,120 @@
+#include <iostream>
+#include <stdio.h>
+
+
+int* createArray(int* size, int* capacity) {
+    *size = 0;
+    *capacity = 1;
+    return new int[*capacity];
+}
+
+int* resizeArray(int* arr, int* size, int* capacity, int newCapacity) {
+    int* newArr = new int[newCapacity];
+    for (int i = 0; i < *size; i++) {
+        newArr[i] = arr[i];
+    }
+    delete[] arr;
+    *capacity = newCapacity;
+    return newArr;
+}
+
+
+int insertElement(int* arr, int* size, int* capacity, int index, int value) {
+    if (index < 0 || index > *size) {
+        return 0; 
+    }
+
+   
+    if (*size == *capacity) {
+        arr = resizeArray(arr, size, capacity, *capacity * 2);
+    }
+
+    
+    for (int i = *size; i > index; i--) {
+        arr[i] = arr[i - 1];
+    }
+
+    arr[index] = value;
+    (*size)++;
+    return 1;
+}
+
+
+int removeElement(int* arr, int* size, int* capacity, int index) {
+    if (index < 0 || index >= *size) {
+        return 0; 
+    }
+
+    
+    for (int i = index; i < *size - 1; i++) {
+        arr[i] = arr[i + 1];
+    }
+
+    (*size)--;
+
+    
+    if (*size > 0 && *size <= *capacity / 4) {
+        arr = resizeArray(arr, size, capacity, *capacity / 2);
+    }
+
+    return 1; 
+}
+
+
+void printArray(int* arr, int size) {
+    printf("Array: ");
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+
+int main() {
+    int size, capacity;
+    int* arr = createArray(&size, &capacity);
+    int choice, index, value;
+
+    while (1) {
+        printf("\n1. Insert element\n2. Remove element\n3. Print array\n4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter index: ");
+            scanf("%d", &index);
+            printf("Enter value: ");
+            scanf("%d", &value);
+            if (insertElement(arr, &size, &capacity, index, value)) {
+                printf("Element inserted\n");
+            }
+            else {
+                printf("Invalid index\n");
+            }
+            break;
+
+        case 2:
+            printf("Enter index: ");
+            scanf("%d", &index);
+            if (removeElement(arr, &size, &capacity, index)) {
+                printf("Element removed\n");
+            }
+            else {
+                printf("Invalid index\n");
+            }
+            break;
+
+        case 3:
+            printArray(arr, size);
+            break;
+
+        case 4:
+            delete[] arr;
+            return 0;
+
+        default:
+            printf("Invalid choice\n");
+        }
+    }
+}
